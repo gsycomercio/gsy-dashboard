@@ -1100,76 +1100,80 @@ renderComprasTable();
 <div class="section" id="sec-mp">
 
   <!-- Header -->
-  <div style="background:linear-gradient(135deg,#0a0a0a,#1a1208);border:1px solid #2a2a2a;border-radius:10px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div style="background:linear-gradient(135deg,#0a0a0a,#001a2e);border:1px solid #003a5c;border-radius:10px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div style="display:flex;align-items:center;gap:14px;">
       <div style="background:#009ee3;border-radius:8px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:20px;">💳</div>
       <div>
         <div style="font-size:16px;font-weight:800;color:#f0ede8;">Mercado Pago</div>
-        <div style="font-size:11px;color:#7a7570;margin-top:2px;">Saldo, recebimentos e transações em tempo real</div>
+        <div style="font-size:11px;color:#7a7570;margin-top:2px;">Saldo e previsão de recebimentos em tempo real</div>
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span id="mp-status" style="font-size:11px;font-family:'DM Mono',monospace;color:#7a7570;">–</span>
-      <button class="btn blue" onclick="loadMP()" style="background:#009ee3;">↻ Atualizar</button>
+      <button class="btn" onclick="loadMP()" style="background:#009ee3;color:#fff;">↻ Atualizar</button>
     </div>
   </div>
 
-  <!-- KPI Cards -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;" id="mp-kpis">
-    <div class="kpi"><div class="kpi-label">Saldo Disponível</div><div class="kpi-value" id="mp-disponivel" style="color:#4ade80;">–</div></div>
-    <div class="kpi"><div class="kpi-label">A Liberar</div><div class="kpi-value" id="mp-liberar" style="color:#f0a040;">–</div></div>
-    <div class="kpi"><div class="kpi-label">Total em Trânsito</div><div class="kpi-value" id="mp-transito" style="color:#38bdf8;">–</div></div>
-    <div class="kpi"><div class="kpi-label">Recebido (30 dias)</div><div class="kpi-value" id="mp-30d" style="color:#f0ede8;">–</div></div>
+  <!-- SALDO CARDS -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;">
+    <div class="kpi" style="border-color:#1a3a1a;">
+      <div class="kpi-label">💰 Saldo Disponível</div>
+      <div class="kpi-value green" id="mp-disponivel">–</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Pode sacar agora</div>
+    </div>
+    <div class="kpi" style="border-color:#2a2a00;">
+      <div class="kpi-label">⏳ A Liberar (Total)</div>
+      <div class="kpi-value" id="mp-liberar" style="color:#f0a040;">–</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Aprovado, aguardando prazo</div>
+    </div>
+    <div class="kpi" style="border-color:#003a5c;">
+      <div class="kpi-label">📅 Libera Hoje</div>
+      <div class="kpi-value" id="mp-hoje" style="color:#38bdf8;">–</div>
+    </div>
+    <div class="kpi" style="border-color:#003a5c;">
+      <div class="kpi-label">📅 Libera Amanhã</div>
+      <div class="kpi-value" id="mp-amanha" style="color:#38bdf8;">–</div>
+    </div>
+    <div class="kpi" style="border-color:#003a5c;">
+      <div class="kpi-label">📅 Próximos 7 dias</div>
+      <div class="kpi-value" id="mp-7d" style="color:#38bdf8;">–</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">📦 Recebido (30 dias)</div>
+      <div class="kpi-value" id="mp-30d" style="color:#f0ede8;">–</div>
+    </div>
   </div>
 
-  <!-- Previsão de recebimentos -->
+  <!-- PREVISÃO POR DATA -->
   <div class="card" style="margin-bottom:20px;">
-    <div class="card-title">📅 Previsão de Recebimentos</div>
-    <div id="mp-previsao-wrap">
-      <div style="color:var(--muted);font-size:13px;">Carregando...</div>
-    </div>
+    <div class="card-title">📆 Calendário de Liberações</div>
+    <div id="mp-previsao-wrap" style="color:var(--muted);font-size:13px;">Clique em Atualizar para carregar</div>
   </div>
 
-  <!-- Últimas transações -->
+  <!-- TRANSAÇÕES -->
   <div class="card" style="padding:0;overflow:hidden;">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <div class="card-title" style="margin:0;">💰 Últimas Transações</div>
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div class="card-title" style="margin:0;">💸 Últimas Transações (30 dias)</div>
       <select id="mp-filter-status" onchange="filterMPTrans()" style="width:auto;padding:5px 10px;font-size:12px;">
         <option value="">Todos</option>
-        <option value="approved">Aprovados</option>
-        <option value="pending">Pendentes</option>
-        <option value="in_process">Em processo</option>
-        <option value="rejected">Rejeitados</option>
+        <option value="approved">✅ Aprovados</option>
+        <option value="pending">🟡 Pendentes</option>
+        <option value="in_process">🔵 Em processo</option>
+        <option value="rejected">🔴 Rejeitados</option>
       </select>
     </div>
     <div class="table-wrap">
-      <table class="compras-table" id="mp-trans-table">
-        <thead>
-          <tr>
-            <th>ID</th><th>Data</th><th>Descrição</th><th>Forma</th><th>Valor</th><th>Status</th><th>Liberação</th>
-          </tr>
-        </thead>
+      <table class="compras-table">
+        <thead><tr><th>Data</th><th>Descrição</th><th>Forma</th><th>Valor</th><th>Status</th><th>Liberação</th></tr></thead>
         <tbody id="mp-trans-body">
-          <tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Clique em Atualizar para carregar</td></tr>
+          <tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Clique em Atualizar para carregar</td></tr>
         </tbody>
       </table>
-    </div>
-  </div>
-
-  <!-- CORS warning -->
-  <div id="mp-cors-warn" style="display:none;background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.3);border-radius:8px;padding:16px 20px;margin-top:16px;">
-    <div style="font-weight:700;color:#e05555;margin-bottom:6px;">⚠️ Bloqueio de CORS detectado</div>
-    <div style="font-size:13px;color:#7a7570;line-height:1.6;">
-      O navegador bloqueou a chamada direta à API do Mercado Pago por segurança (CORS). Isso acontece quando o arquivo é aberto localmente.<br><br>
-      <strong style="color:#f0ede8;">Solução rápida:</strong> Abra o HTML num servidor local. Se tiver Python instalado, rode no terminal:<br>
-      <code style="background:#1a1a1a;padding:6px 10px;border-radius:4px;display:inline-block;margin-top:6px;color:#f0a040;">python3 -m http.server 8080</code><br>
-      <span style="font-size:12px;">Depois acesse <strong style="color:#f0ede8;">http://localhost:8080</strong> no navegador.</span>
     </div>
   </div>
 </div>
 
 <script>
-const MP_TOKEN = 'APP_USR-8997497946648441-050817-81359fd6d7d9dcba7648561d022b5348-1467652438';
 let mpTransAll = [];
 
 async function mpFetch(endpoint) {
@@ -1178,108 +1182,129 @@ async function mpFetch(endpoint) {
   return res.json();
 }
 
+function dateStr(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().split('T')[0];
+}
+
 async function loadMP() {
   document.getElementById('mp-status').textContent = '⟳ Carregando...';
-  document.getElementById('mp-cors-warn').style.display = 'none';
   try {
     // 1. Saldo
     const balance = await mpFetch('balance');
     const disponivel = balance.available_balance || 0;
-    const liberar   = balance.unavailable_balance || 0;
+    const liberar    = balance.unavailable_balance || 0;
     document.getElementById('mp-disponivel').textContent = fmt(disponivel);
     document.getElementById('mp-liberar').textContent    = fmt(liberar);
-    document.getElementById('mp-transito').textContent   = fmt(disponivel + liberar);
 
-    // 2. Pagamentos 30 dias
+    // 2. Releases (a liberar por data)
+    const relData = await mpFetch('releases');
+    const releases = relData.results || [];
+    renderPrevisao(releases);
+
+    // Calcular hoje / amanhã / 7 dias
+    const hoje    = dateStr(0);
+    const amanha  = dateStr(1);
+    const em7dias = dateStr(7);
+
+    const getField = r => r.date_release || r.release_date || r.date || '';
+
+    const totHoje  = releases.filter(r => getField(r).startsWith(hoje))
+                              .reduce((s,r) => s + (r.net_amount || r.amount || 0), 0);
+    const totAmanha = releases.filter(r => getField(r).startsWith(amanha))
+                               .reduce((s,r) => s + (r.net_amount || r.amount || 0), 0);
+    const tot7d    = releases.filter(r => { const d = getField(r).split('T')[0]; return d >= hoje && d <= em7dias; })
+                              .reduce((s,r) => s + (r.net_amount || r.amount || 0), 0);
+
+    document.getElementById('mp-hoje').textContent   = fmt(totHoje);
+    document.getElementById('mp-amanha').textContent = fmt(totAmanha);
+    document.getElementById('mp-7d').textContent     = fmt(tot7d);
+
+    // 3. Pagamentos 30 dias
     const payments = await mpFetch('payments');
-    const results = payments.results || [];
-    const recebido30 = results.filter(p=>p.status==='approved').reduce((s,p)=>s+(p.transaction_amount||0),0);
-    document.getElementById('mp-30d').textContent = fmt(recebido30);
+    const results  = payments.results || [];
+    const rec30    = results.filter(p => p.status === 'approved')
+                            .reduce((s,p) => s + (p.transaction_amount || 0), 0);
+    document.getElementById('mp-30d').textContent = fmt(rec30);
     mpTransAll = results;
     renderMPTrans(results);
-
-    // 3. Previsão de recebimentos
-    try {
-      const releases = await mpFetch('releases');
-      renderPrevisao(releases.results || []);
-    } catch {
-      document.getElementById('mp-previsao-wrap').innerHTML =
-        '<div style="color:var(--muted);font-size:13px;">Previsão não disponível para este tipo de conta.</div>';
-    }
 
     document.getElementById('mp-status').textContent = '✓ Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
   } catch(e) {
     document.getElementById('mp-status').textContent = '✗ Erro: ' + e.message;
-    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-      document.getElementById('mp-cors-warn').style.display = 'block';
-    }
     document.getElementById('mp-trans-body').innerHTML =
-      `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--danger);">Erro ao carregar: ${e.message}</td></tr>`;
+      `<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--danger);">Erro: ${e.message}</td></tr>`;
   }
-}
-
-function renderMPTrans(list) {
-  const tbody = document.getElementById('mp-trans-body');
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma transação encontrada</td></tr>';
-    return;
-  }
-  const statusMap = {
-    approved:   {label:'✅ Aprovado',   cls:'badge-pago'},
-    pending:    {label:'🟡 Pendente',   cls:'badge-proximo'},
-    in_process: {label:'🔵 Em processo',cls:'badge-ok'},
-    rejected:   {label:'🔴 Rejeitado',  cls:'badge-vencido'},
-    cancelled:  {label:'⚫ Cancelado',  cls:'badge-apagar'},
-    refunded:   {label:'↩ Estornado',   cls:'badge-apagar'},
-  };
-  tbody.innerHTML = list.map(p => {
-    const st = statusMap[p.status] || {label: p.status, cls:'badge-apagar'};
-    const data = p.date_created ? new Date(p.date_created).toLocaleDateString('pt-BR') : '—';
-    const libDate = p.money_release_date ? new Date(p.money_release_date).toLocaleDateString('pt-BR') : '—';
-    const desc = p.description || p.payment_method_id || '—';
-    const forma = (p.payment_type_id||'').replace('_',' ');
-    return `<tr>
-      <td class="mono" style="font-size:11px;color:var(--muted)">${p.id}</td>
-      <td class="mono" style="font-size:12px">${data}</td>
-      <td style="font-size:12px;max-width:180px">${desc}</td>
-      <td style="font-size:12px;color:var(--muted);text-transform:capitalize">${forma}</td>
-      <td class="mono" style="font-weight:700;color:${p.status==='approved'?'var(--accent)':'var(--muted)'}">${fmt(p.transaction_amount||0)}</td>
-      <td><span class="badge ${st.cls}">${st.label}</span></td>
-      <td class="mono" style="font-size:12px;color:var(--accent2)">${libDate}</td>
-    </tr>`;
-  }).join('');
 }
 
 function renderPrevisao(list) {
   const wrap = document.getElementById('mp-previsao-wrap');
   if (!list.length) {
-    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;">Nenhum recebimento previsto.</div>';
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;">Nenhuma liberação prevista encontrada.</div>';
     return;
   }
-  // Agrupar por data de liberação
+  const getField = r => r.date_release || r.release_date || r.date || '';
+  const hoje = dateStr(0);
   const byDate = {};
   list.forEach(r => {
-    const d = r.date_release ? r.date_release.split('T')[0] : 'sem data';
+    const raw = getField(r);
+    const d = raw ? raw.split('T')[0] : 'sem data';
     if (!byDate[d]) byDate[d] = 0;
     byDate[d] += r.net_amount || r.amount || 0;
   });
   const sorted = Object.entries(byDate).sort((a,b)=>a[0].localeCompare(b[0]));
-  wrap.innerHTML = `
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      ${sorted.map(([d,v]) => {
-        const label = d === 'sem data' ? '—' : new Date(d+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-        const isPast = d < new Date().toISOString().split('T')[0];
-        return `<div style="background:${isPast?'rgba(74,222,128,0.08)':'rgba(56,189,248,0.08)'};border:1px solid ${isPast?'rgba(74,222,128,0.2)':'rgba(56,189,248,0.2)'};border-radius:8px;padding:12px 16px;min-width:120px;text-align:center;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">${label}</div>
-          <div style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;color:${isPast?'var(--accent)':'var(--accent2)'};">${fmt(v)}</div>
-        </div>`;
-      }).join('')}
-    </div>`;
+  wrap.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;">` +
+    sorted.map(([d, v]) => {
+      const isHoje   = d === hoje;
+      const isAmanha = d === dateStr(1);
+      const isPast   = d < hoje;
+      const label = isHoje ? 'HOJE' : isAmanha ? 'AMANHÃ' :
+        (d === 'sem data' ? '—' : new Date(d+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',weekday:'short'}));
+      const cor  = isHoje ? '#4ade80' : isPast ? '#7a7570' : '#38bdf8';
+      const bg   = isHoje ? 'rgba(74,222,128,0.1)' : isPast ? 'rgba(120,120,120,0.05)' : 'rgba(56,189,248,0.08)';
+      const bord = isHoje ? 'rgba(74,222,128,0.3)' : isPast ? 'rgba(120,120,120,0.15)' : 'rgba(56,189,248,0.2)';
+      return `<div style="background:${bg};border:1px solid ${bord};border-radius:8px;padding:12px 16px;min-width:110px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${cor};margin-bottom:6px;">${label}</div>
+        <div style="font-size:15px;font-weight:800;font-family:'DM Mono',monospace;color:${cor};">${fmt(v)}</div>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+function renderMPTrans(list) {
+  const tbody = document.getElementById('mp-trans-body');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Nenhuma transação</td></tr>';
+    return;
+  }
+  const statusMap = {
+    approved:   {label:'✅ Aprovado',    cls:'badge-pago'},
+    pending:    {label:'🟡 Pendente',    cls:'badge-proximo'},
+    in_process: {label:'🔵 Em processo', cls:'badge-ok'},
+    rejected:   {label:'🔴 Rejeitado',   cls:'badge-vencido'},
+    cancelled:  {label:'⚫ Cancelado',   cls:'badge-apagar'},
+    refunded:   {label:'↩ Estornado',    cls:'badge-apagar'},
+  };
+  tbody.innerHTML = list.map(p => {
+    const st      = statusMap[p.status] || {label: p.status, cls:'badge-apagar'};
+    const data    = p.date_created ? new Date(p.date_created).toLocaleDateString('pt-BR') : '—';
+    const libDate = p.money_release_date ? new Date(p.money_release_date).toLocaleDateString('pt-BR') : '—';
+    const desc    = p.description || p.payment_method_id || '—';
+    const forma   = (p.payment_type_id||'').replace(/_/g,' ');
+    return `<tr>
+      <td class="mono" style="font-size:12px;">${data}</td>
+      <td style="font-size:12px;max-width:200px;">${desc}</td>
+      <td style="font-size:12px;color:var(--muted);text-transform:capitalize;">${forma}</td>
+      <td class="mono" style="font-weight:700;color:${p.status==='approved'?'var(--accent)':'var(--muted)'};">${fmt(p.transaction_amount||0)}</td>
+      <td><span class="badge ${st.cls}">${st.label}</span></td>
+      <td class="mono" style="font-size:12px;color:var(--accent2);">${libDate}</td>
+    </tr>`;
+  }).join('');
 }
 
 function filterMPTrans() {
-  const status = document.getElementById('mp-filter-status').value;
-  const filtered = status ? mpTransAll.filter(p=>p.status===status) : mpTransAll;
+  const status   = document.getElementById('mp-filter-status').value;
+  const filtered = status ? mpTransAll.filter(p => p.status === status) : mpTransAll;
   renderMPTrans(filtered);
 }
 </script>
