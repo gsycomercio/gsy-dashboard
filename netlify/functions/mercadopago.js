@@ -3,9 +3,9 @@ exports.handler = async function(event) {
   const endpoint = event.queryStringParameters && event.queryStringParameters.endpoint;
 
   const endpoints = {
-    balance:   'https://api.mercadopago.com/v1/account/balance',
-    releases:  'https://api.mercadopago.com/v1/account/release/search?offset=0&limit=50',
-    payments:  'https://api.mercadopago.com/v1/payments/search?sort=date_created&criteria=desc&range=date_created&begin_date=NOW-30DAYS&end_date=NOW&limit=50',
+    balance:  'https://api.mercadopago.com/v1/account/balance',
+    releases: 'https://api.mercadopago.com/v1/account/release/search?offset=0&limit=100',
+    payments: 'https://api.mercadopago.com/v1/payments/search?sort=date_created&criteria=desc&range=date_created&begin_date=NOW-30DAYS&end_date=NOW&limit=50',
   };
 
   if (!endpoint || !endpoints[endpoint]) {
@@ -14,7 +14,10 @@ exports.handler = async function(event) {
 
   try {
     const response = await fetch(endpoints[endpoint], {
-      headers: { 'Authorization': 'Bearer ' + token }
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      }
     });
     const data = await response.json();
     return {
@@ -28,6 +31,7 @@ exports.handler = async function(event) {
   } catch (err) {
     return {
       statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ error: err.message }),
     };
   }
